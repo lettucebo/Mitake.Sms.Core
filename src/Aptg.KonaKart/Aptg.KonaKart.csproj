@@ -5,7 +5,7 @@
         <Authors>Money Yu</Authors>
         <Company>Money</Company>
         <Description>亞太電信e管家 C# SDK</Description>
-        <Version>6.0.0</Version>
+        <Version>1.0.0</Version>
         <PackageIconUrl>https://i.imgur.com/3xZ4Cdx.png</PackageIconUrl>
         <PackageProjectUrl>https://github.com/lettucebo/Aptg.KonaKart</PackageProjectUrl>
     </PropertyGroup>
