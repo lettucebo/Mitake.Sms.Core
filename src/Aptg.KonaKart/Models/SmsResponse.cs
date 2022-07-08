@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Aptg.KonaKart.Core.Models
+namespace Aptg.KonaKart.Models
 {
     public class SmsResponse
     {
