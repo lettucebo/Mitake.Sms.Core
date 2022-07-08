@@ -49,7 +49,7 @@ stages:
               buildType: "current"
               downloadType: "single"
               artifactName: "drop"
-              downloadPath: "$(System.ArtifactsDirectory)"
+              downloadPath: "$(System.ArtifactStagingDirectory)"
 
           - task: DotNetCoreCLI@2
             displayName: "Push to Nuget"
