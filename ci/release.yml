@@ -28,7 +28,7 @@ stages:
             displayName: Pack
             inputs:
               command: 'pack'
-              packagesToPack: 'src/Aptg.KonaKart/Aptg.KonaKart.csproj'
+              packagesToPack: 'src/Aptg.KonaKart/Aptg.KonaKart.Core.csproj'
               includesymbols: true
               versioningScheme: 'off'
 
