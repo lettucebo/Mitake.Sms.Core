@@ -1,0 +1,81 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - refs/tags/*
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: "windows-latest"
+        variables:
+          buildConfiguration: "Release"
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: "sdk"
+              version: "6.0.x"
+
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: "restore"
+              projects: "**/*.sln"
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: "build"
+              projects: "**/*.sln"
+              arguments: "--configuration $(BuildConfiguration)"
+
+          - task: NuGetToolInstaller@1
+            displayName: "Use NuGet 5.2.0"
+            inputs:
+              versionSpec: "5.2.x"
+
+          - task: NuGetCommand@2
+            displayName: "NuGet pack Ci.Extension.AspNetCore"
+            inputs:
+              command: "pack"
+              packagesToPack: 'src\Ci.Extension.AspNetCore\Ci.Extension.AspNetCore.csproj'
+              includeSymbols: true
+
+          - task: NuGetCommand@2
+            displayName: "NuGet pack Ci.Extension.Core"
+            inputs:
+              command: pack
+              packagesToPack: 'src\Ci.Extension.Core\Ci.Extension.Core.csproj'
+              includeSymbols: true
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
+
+  - stage: Deploy
+    jobs:
+      - job: Depoly
+        pool:
+          vmImage: "windows-latest"
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: "current"
+              downloadType: "single"
+              artifactName: "drop"
+              downloadPath: "$(System.ArtifactsDirectory)"
+
+          - task: NuGetCommand@2
+            displayName: "Push to Azure Artifact"
+            inputs:
+              command: 'push'
+              packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg;!$(System.ArtifactsDirectory)/**/*.symbols.nupkg'
+              nuGetFeedType: 'external'
+              publishFeedCredentials: 'Nuget.org'
