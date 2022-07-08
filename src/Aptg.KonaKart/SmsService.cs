@@ -2,6 +2,7 @@
 using Aptg.KonaKart.Models;
 using AptgSmsServiceReference;
 using Ci.Result;
+using PhoneNumbers;
 
 namespace Aptg.KonaKart
 {
@@ -113,11 +114,15 @@ namespace Aptg.KonaKart
             var repsElement = xmlDoc.CreateElement("REPS");
             xmlDoc.AppendChild(repsElement);
 
+            var phoneUtil = PhoneNumberUtil.GetInstance();
+
             foreach (var model in models)
             {
+                var interMobile = phoneUtil.Parse(model.Mobile, "TW"); ;
+
                 var userElement = xmlDoc.CreateElement("USER");
                 userElement.SetAttribute("NAME", model.Name);
-                userElement.SetAttribute("MOBILE", model.Mobile);
+                userElement.SetAttribute("MOBILE", phoneUtil.Format(interMobile, PhoneNumberFormat.E164));
                 userElement.SetAttribute("EMAIL", model.Email);
                 userElement.SetAttribute("SENDTIME", model.SendTime?.ToString("yyyyMMddHHmmss"));
 
