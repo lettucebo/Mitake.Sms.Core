@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml;
-using Aptg.KonaKart.Models;
+using Aptg.KonaKart.Core.Models;
 using AptgSmsServiceReference;
 using Ci.Result;
 using PhoneNumbers;
 
-namespace Aptg.KonaKart
+namespace Aptg.KonaKart.Core
 {
     public class SmsService
     {

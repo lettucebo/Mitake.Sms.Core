@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Aptg.KonaKart.Models
+﻿namespace Aptg.KonaKart.Core.Models
 {
     /// <summary>
     /// 簡訊內容
