@@ -1,4 +1,7 @@
-﻿using System.Xml;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Xml;
 using Aptg.KonaKart.Models;
 using AptgSmsServiceReference;
 using Ci.Result;
@@ -77,7 +80,7 @@ namespace Aptg.KonaKart
         /// <returns></returns>
         public async Task<CiResult<SmsResponse>> SendSmsAsync(SmsModel model, List<string> receiverList, DateTime? sendTime = null)
         {
-            var receiverStr = string.Join(',', receiverList);
+            var receiverStr = string.Join(",", receiverList);
             string sendTimeStr = string.Empty;
             if (sendTime.HasValue)
                 sendTimeStr = sendTime.Value.ToString("yyyyMMddHHmmss");
