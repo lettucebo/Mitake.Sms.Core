@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Aptg.KonaKart.Core.Models
+namespace Aptg.KonaKart.Models
 {
     /// <summary>
     /// 簡訊內容
