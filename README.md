@@ -1,3 +1,3 @@
-# Ci.Extensions
-[![Build status](https://lettucebo.visualstudio.com/Ci.Extensions/_apis/build/status/Ci.Extensions-.NET-CI)](https://lettucebo.visualstudio.com/Ci.Extensions/_build/latest?definitionId=13)
-[![Nuget](https://img.shields.io/nuget/v/Ci.Extensions.svg)](https://www.nuget.org/packages/Ci.Extensions/)
+# 亞太電信e管家 C# SDK
+[![Build Status](https://dev.azure.com/lettucebo/Github.Build/_apis/build/status/lettucebo.Aptg.KonaKart?branchName=master)](https://dev.azure.com/lettucebo/Github.Build/_build/latest?definitionId=32&branchName=master)
+[![Nuget](https://img.shields.io/nuget/v/Aptg.KonaKart.svg)](https://www.nuget.org/packages/Aptg.KonaKart/)
