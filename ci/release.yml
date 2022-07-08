@@ -42,7 +42,7 @@ stages:
     jobs:
       - job: Depoly
         pool:
-          vmImage: "ubuntu-22.04"
+          vmImage: "windows-2022"
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
@@ -50,10 +50,6 @@ stages:
               downloadType: "single"
               artifactName: "drop"
               downloadPath: "$(System.ArtifactsDirectory)"
-
-          - task: NuGetToolInstaller@1
-            inputs:
-              versionSpec: 
 
           - task: NuGetCommand@2
             displayName: "Push to Nuget"
