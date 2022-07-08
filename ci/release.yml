@@ -7,7 +7,7 @@ stages:
       - job: Build
         displayName: Build
         pool:
-          vmImage: "windows-2022"
+          vmImage: "ubuntu-22.04"
         variables:
           buildConfiguration: "Release"
         steps:
@@ -24,12 +24,13 @@ stages:
               projects: "**/*.sln"
               arguments: "--configuration $(BuildConfiguration)"
 
-          - task: NuGetCommand@2
+          - task: DotNetCoreCLI@2
             displayName: Pack
             inputs:
               command: 'pack'
-              packagesToPack: 'src/Aptg.KonaKart/Aptg.KonaKart.Core.csproj'
+              packagesToPack: 'src/Aptg.KonaKart/Aptg.KonaKart.csproj'
               includesymbols: true
+              versioningScheme: 'off'
 
           - task: PublishBuildArtifacts@1
             inputs:
