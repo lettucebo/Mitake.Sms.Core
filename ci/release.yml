@@ -49,12 +49,12 @@ stages:
               buildType: "current"
               downloadType: "single"
               artifactName: "drop"
-              downloadPath: "$(System.ArtifactStagingDirectory)"
+              downloadPath: "$(System.ArtifactsDirectory)"
 
           - task: DotNetCoreCLI@2
             displayName: "Push to Nuget"
             inputs:
               command: 'push'
-              packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+              packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg'
               nuGetFeedType: 'external'
               publishFeedCredentials: 'Nuget.org'
