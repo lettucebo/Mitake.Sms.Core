@@ -55,6 +55,6 @@ stages:
             displayName: "Push to Nuget"
             inputs:
               command: 'push'
-              packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg'
+              packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg;!$(System.ArtifactsDirectory)/**/*.symbols.nupkg'
               nuGetFeedType: 'external'
               publishFeedCredentials: 'Nuget.org'
