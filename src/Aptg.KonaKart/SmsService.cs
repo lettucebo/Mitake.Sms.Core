@@ -153,27 +153,40 @@ namespace Aptg.KonaKart
             else if (responseModel.Credit == -301.0)
             {
                 result.Status = CiStatus.UnAuthorized;
-                result.Message = "Session 資料不存在，請重新登入。";
+                result.Message = $"Session 資料不存在，請重新登入。\r\n Server msg: {responseModel.Message}";
             }
             else if (responseModel.Credit == -99.0)
-                result.Message = "主機端發生不明錯誤，請與廠商窗口聯繫。";
+                result.Message = $"主機端發生不明錯誤，請與廠商窗口聯繫。\r\n Server msg: {responseModel.Message}";
             else
-                result.Message = "未知錯誤。";
+                result.Message = $"未知錯誤。\r\n Server msg: {responseModel.Message}";
 
             return result;
         }
 
+        /// <summary>
+        /// 將回應轉為 Model
+        /// </summary>
+        /// <param name="responseString"></param>
+        /// <returns></returns>
         private SmsResponse CreditResponseToModel(string responseString)
         {
             var values = responseString.Split(',');
             var responseModel = new SmsResponse()
             {
                 Credit = double.Parse(values[0]),
-                Sent = int.Parse(values[1]),
-                Cost = double.Parse(values[2]),
-                UnSend = int.Parse(values[3]),
-                BatchId = Guid.Parse(values[4])
             };
+
+            if (values.Length > 2)
+            {
+                responseModel.Sent = int.Parse(values[1]);
+                responseModel.Cost = double.Parse(values[2]);
+                responseModel.UnSend = int.Parse(values[3]);
+                responseModel.BatchId = Guid.Parse(values[4]);
+            }
+            else
+            {
+                responseModel.Message = values[1];
+            }
 
             return responseModel;
         }
