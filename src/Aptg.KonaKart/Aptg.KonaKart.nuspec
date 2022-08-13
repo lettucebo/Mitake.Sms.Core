@@ -11,7 +11,7 @@
         <dependencies>
             <group targetFramework=".NETStandard2.0">
                 <dependency id="Ci.Result" version="4.1.1" />
-                <dependency id="libphonenumber-csharp" version="8.12.50" />
+                <dependency id="libphonenumber-csharp" version="8.12.53" />
                 <dependency id="System.ServiceModel.Duplex" version="4.9.0" />
                 <dependency id="System.ServiceModel.Federation" version="4.9.0" />
                 <dependency id="System.ServiceModel.Http" version="4.9.0" />
