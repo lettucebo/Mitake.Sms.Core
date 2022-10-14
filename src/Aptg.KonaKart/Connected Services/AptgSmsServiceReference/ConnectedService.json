@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "http://biz2.every8d.com/aptg/API21/SOAP/SMS.asmx"
+        "https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx"
     ],
     "collectionTypes": [
       "System.Array",

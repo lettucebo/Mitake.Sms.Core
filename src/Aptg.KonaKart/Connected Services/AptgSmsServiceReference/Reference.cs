@@ -1074,11 +1074,11 @@ namespace AptgSmsServiceReference
         {
             if ((endpointConfiguration == EndpointConfiguration.SMSSoap))
             {
-                return new System.ServiceModel.EndpointAddress("http://biz2.every8d.com/aptg/API21/SOAP/SMS.asmx");
+                return new System.ServiceModel.EndpointAddress("https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx");
             }
             if ((endpointConfiguration == EndpointConfiguration.SMSSoap12))
             {
-                return new System.ServiceModel.EndpointAddress("http://biz2.every8d.com/aptg/API21/SOAP/SMS.asmx");
+                return new System.ServiceModel.EndpointAddress("https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
