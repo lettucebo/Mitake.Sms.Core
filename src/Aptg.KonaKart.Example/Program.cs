@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Aptg.KonaKart.Models;
+using Ci.Result;
+using Microsoft.Extensions.Configuration;
 
 namespace Aptg.KonaKart.Example
 {
@@ -8,13 +10,39 @@ namespace Aptg.KonaKart.Example
         {
             var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
-            Console.WriteLine("Hello, World!");
             var smsService = new SmsService();
-            var connResult = await smsService.CreateConnectionAsync(config["SmsAccount"], config["SmsPassword"]).ConfigureAwait(false);
+            Console.WriteLine("Connecting to sms client...");
+            var connResult = await smsService.CreateConnectionAsync(config["SmsAccount"], config["SmsPassword"])
+                .ConfigureAwait(false);
+            if (connResult.Status != CiStatus.Success)
+            {
+                Console.WriteLine($"Establish connection fail: {connResult.Status}, {connResult.Message}");
+                return;
+            }
+
+            Console.WriteLine(
+                $"Connection establish success, {connResult.Status}, {connResult.Message}, sessionKey: {connResult.Payload}");
 
             var sessionKey = connResult.Payload;
 
+            var sendList = new List<PersonalizedSmsModel>()
+            {
+                new PersonalizedSmsModel()
+                {
+                    Name = "Demo",
+                    Mobile = config["Mobile"],
+                    Content = "This is a test msg."
+                }
+            };
+
+            var sendResult = await smsService.SendPersonalizedSmsAsync(sendList).ConfigureAwait(false);
+
+            Console.WriteLine(
+                $"Send result: {sendResult.Status}, {sendResult.Message}, BatchId: {sendResult.Payload.BatchId}");
+
+
             await smsService.CloseConnectionAsync(sessionKey).ConfigureAwait(false);
+            Console.WriteLine("Connection successfully closed.");
         }
     }
 }
