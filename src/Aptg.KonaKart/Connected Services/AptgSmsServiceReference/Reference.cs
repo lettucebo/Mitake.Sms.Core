@@ -39,9 +39,6 @@ namespace AptgSmsServiceReference
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getCredit", ReplyAction="*")]
         System.Threading.Tasks.Task<AptgSmsServiceReference.getCreditResponse> getCreditAsync(AptgSmsServiceReference.getCreditRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getFreePhoneCallinLog", ReplyAction="*")]
-        System.Threading.Tasks.Task<AptgSmsServiceReference.getFreePhoneCallinLogResponse> getFreePhoneCallinLogAsync(AptgSmsServiceReference.getFreePhoneCallinLogRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -347,20 +344,20 @@ namespace AptgSmsServiceReference
         public string sendTime;
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=5)]
-        public string retryTime;
+        public string retryTimeStr;
         
         public sendMessageRequestBody()
         {
         }
         
-        public sendMessageRequestBody(string sessionKey, string subject, string content, string mobile, string sendTime, string retryTime)
+        public sendMessageRequestBody(string sessionKey, string subject, string content, string mobile, string sendTime, string retryTimeStr)
         {
             this.sessionKey = sessionKey;
             this.subject = subject;
             this.content = content;
             this.mobile = mobile;
             this.sendTime = sendTime;
-            this.retryTime = retryTime;
+            this.retryTimeStr = retryTimeStr;
         }
     }
     
@@ -748,102 +745,6 @@ namespace AptgSmsServiceReference
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class getFreePhoneCallinLogRequest
-    {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="getFreePhoneCallinLog", Namespace="http://tempuri.org/", Order=0)]
-        public AptgSmsServiceReference.getFreePhoneCallinLogRequestBody Body;
-        
-        public getFreePhoneCallinLogRequest()
-        {
-        }
-        
-        public getFreePhoneCallinLogRequest(AptgSmsServiceReference.getFreePhoneCallinLogRequestBody Body)
-        {
-            this.Body = Body;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
-    public partial class getFreePhoneCallinLogRequestBody
-    {
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
-        public string sessionKey;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
-        public string activityID;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
-        public string beginDate;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
-        public string endDate;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
-        public string pageNo;
-        
-        public getFreePhoneCallinLogRequestBody()
-        {
-        }
-        
-        public getFreePhoneCallinLogRequestBody(string sessionKey, string activityID, string beginDate, string endDate, string pageNo)
-        {
-            this.sessionKey = sessionKey;
-            this.activityID = activityID;
-            this.beginDate = beginDate;
-            this.endDate = endDate;
-            this.pageNo = pageNo;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class getFreePhoneCallinLogResponse
-    {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="getFreePhoneCallinLogResponse", Namespace="http://tempuri.org/", Order=0)]
-        public AptgSmsServiceReference.getFreePhoneCallinLogResponseBody Body;
-        
-        public getFreePhoneCallinLogResponse()
-        {
-        }
-        
-        public getFreePhoneCallinLogResponse(AptgSmsServiceReference.getFreePhoneCallinLogResponseBody Body)
-        {
-            this.Body = Body;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
-    public partial class getFreePhoneCallinLogResponseBody
-    {
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
-        public string getFreePhoneCallinLogResult;
-        
-        public getFreePhoneCallinLogResponseBody()
-        {
-        }
-        
-        public getFreePhoneCallinLogResponseBody(string getFreePhoneCallinLogResult)
-        {
-            this.getFreePhoneCallinLogResult = getFreePhoneCallinLogResult;
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.3")]
     public interface SMSSoapChannel : AptgSmsServiceReference.SMSSoap, System.ServiceModel.IClientChannel
     {
@@ -940,7 +841,7 @@ namespace AptgSmsServiceReference
             return base.Channel.sendMessageAsync(request);
         }
         
-        public System.Threading.Tasks.Task<AptgSmsServiceReference.sendMessageResponse> sendMessageAsync(string sessionKey, string subject, string content, string mobile, string sendTime, string retryTime)
+        public System.Threading.Tasks.Task<AptgSmsServiceReference.sendMessageResponse> sendMessageAsync(string sessionKey, string subject, string content, string mobile, string sendTime, string retryTimeStr)
         {
             AptgSmsServiceReference.sendMessageRequest inValue = new AptgSmsServiceReference.sendMessageRequest();
             inValue.Body = new AptgSmsServiceReference.sendMessageRequestBody();
@@ -949,7 +850,7 @@ namespace AptgSmsServiceReference
             inValue.Body.content = content;
             inValue.Body.mobile = mobile;
             inValue.Body.sendTime = sendTime;
-            inValue.Body.retryTime = retryTime;
+            inValue.Body.retryTimeStr = retryTimeStr;
             return ((AptgSmsServiceReference.SMSSoap)(this)).sendMessageAsync(inValue);
         }
         
@@ -1015,24 +916,6 @@ namespace AptgSmsServiceReference
             return ((AptgSmsServiceReference.SMSSoap)(this)).getCreditAsync(inValue);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<AptgSmsServiceReference.getFreePhoneCallinLogResponse> AptgSmsServiceReference.SMSSoap.getFreePhoneCallinLogAsync(AptgSmsServiceReference.getFreePhoneCallinLogRequest request)
-        {
-            return base.Channel.getFreePhoneCallinLogAsync(request);
-        }
-        
-        public System.Threading.Tasks.Task<AptgSmsServiceReference.getFreePhoneCallinLogResponse> getFreePhoneCallinLogAsync(string sessionKey, string activityID, string beginDate, string endDate, string pageNo)
-        {
-            AptgSmsServiceReference.getFreePhoneCallinLogRequest inValue = new AptgSmsServiceReference.getFreePhoneCallinLogRequest();
-            inValue.Body = new AptgSmsServiceReference.getFreePhoneCallinLogRequestBody();
-            inValue.Body.sessionKey = sessionKey;
-            inValue.Body.activityID = activityID;
-            inValue.Body.beginDate = beginDate;
-            inValue.Body.endDate = endDate;
-            inValue.Body.pageNo = pageNo;
-            return ((AptgSmsServiceReference.SMSSoap)(this)).getFreePhoneCallinLogAsync(inValue);
-        }
-        
         public virtual System.Threading.Tasks.Task OpenAsync()
         {
             return System.Threading.Tasks.Task.Factory.FromAsync(((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(null, null), new System.Action<System.IAsyncResult>(((System.ServiceModel.ICommunicationObject)(this)).EndOpen));
@@ -1074,11 +957,11 @@ namespace AptgSmsServiceReference
         {
             if ((endpointConfiguration == EndpointConfiguration.SMSSoap))
             {
-                return new System.ServiceModel.EndpointAddress("https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx");
+                return new System.ServiceModel.EndpointAddress("http://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx");
             }
             if ((endpointConfiguration == EndpointConfiguration.SMSSoap12))
             {
-                return new System.ServiceModel.EndpointAddress("https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx");
+                return new System.ServiceModel.EndpointAddress("http://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

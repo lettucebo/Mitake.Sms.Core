@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-        "https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx"
+      "https://biz2.e8d.tw/aptg/API21/SOAP/SMS.asmx"
     ],
     "collectionTypes": [
       "System.Array",
@@ -10,7 +10,7 @@
     "namespaceMappings": [
       "*, AptgSmsServiceReference"
     ],
-    "targetFramework": "net6.0",
+    "targetFramework": "netstandard2.1",
     "typeReuseMode": "All"
   }
 }
