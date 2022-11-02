@@ -42,7 +42,7 @@ stages:
     jobs:
       - job: Depoly
         pool:
-          vmImage: "windows-2022"
+          vmImage: "ubuntu-2022"
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
