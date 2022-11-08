@@ -35,10 +35,12 @@ namespace Aptg.KonaKart.Example
                 }
             };
 
-            var sendResult = await smsService.SendPersonalizedSmsAsync(sendList).ConfigureAwait(false);
+            await smsService.QueryByBatchId("00000000-0000-0000-0000-000000000000");
 
-            Console.WriteLine(
-                $"Send result: {sendResult.Status}, {sendResult.Message}, BatchId: {sendResult.Payload.BatchId}");
+            //var sendResult = await smsService.SendPersonalizedSmsAsync(sendList).ConfigureAwait(false);
+
+            //Console.WriteLine(
+            //    $"Send result: {sendResult.Status}, {sendResult.Message}, BatchId: {sendResult.Payload.BatchId}");
 
 
             await smsService.CloseConnectionAsync(sessionKey).ConfigureAwait(false);

@@ -50,7 +50,10 @@ namespace Aptg.KonaKart
             return result;
         }
 
-        // 設定連線金鑰
+        /// <summary>
+        /// 設定連線金鑰
+        /// </summary>
+        /// <param name="sessionKey"></param>
         public void SetSessionKey(string sessionKey)
         {
             _sessionKey = sessionKey;
@@ -111,6 +114,13 @@ namespace Aptg.KonaKart
             return result;
         }
 
+        /// <summary>
+        /// 簡訊發送
+        /// </summary>
+        /// <param name="models"></param>
+        /// <param name="subject"></param>
+        /// <param name="sendTime"></param>
+        /// <returns></returns>
         public async Task<CiResult<SmsResponse>> SendPersonalizedSmsAsync(List<PersonalizedSmsModel> models, string subject = "", DateTime? sendTime = null)
         {
             var xmlDoc = new XmlDocument();
@@ -161,6 +171,20 @@ namespace Aptg.KonaKart
                 result.Message = $"未知錯誤。\r\n Server msg: {responseModel.Message}";
 
             return result;
+        }
+
+        /// <summary>
+        /// 發送狀態查詢
+        /// </summary>
+        /// <param name="batchId"></param>
+        /// <param name="page"></param>
+        public async Task<getDeliveryStatusResponse> QueryByBatchId(string batchId, int page = 1)
+        {
+            if (page < 1)
+                throw new ArgumentOutOfRangeException(nameof(page));
+
+            var response = await _smsClient.getDeliveryStatusAsync(_sessionKey, batchId, page.ToString());
+            return response;
         }
 
         /// <summary>
