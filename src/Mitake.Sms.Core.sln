@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mitake.Sms.Core", "Mitake.Sms.Core\Mitake.Sms.Core.csproj", "{244A5021-394C-4695-BCD2-78BFF979D3B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mitake.Sms.Core.Example", "Mitake.Sms.Core.Example\Mitake.Sms.Core.Example.csproj", "{6EABE60B-8EB4-4ABF-8886-AD67B35D8E93}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B8220D5-6801-4703-9C23-EA3925DDC59C}"
+	ProjectSection(SolutionItems) = preProject
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{244A5021-394C-4695-BCD2-78BFF979D3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{244A5021-394C-4695-BCD2-78BFF979D3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{244A5021-394C-4695-BCD2-78BFF979D3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{244A5021-394C-4695-BCD2-78BFF979D3B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EABE60B-8EB4-4ABF-8886-AD67B35D8E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EABE60B-8EB4-4ABF-8886-AD67B35D8E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EABE60B-8EB4-4ABF-8886-AD67B35D8E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EABE60B-8EB4-4ABF-8886-AD67B35D8E93}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF470F74-389E-48CD-AEC0-F8E5FAFFEB1F}
+	EndGlobalSection
+EndGlobal
