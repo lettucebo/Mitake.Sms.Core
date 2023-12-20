@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
@@ -35,19 +36,23 @@ namespace Mitake.Sms.Core
         /// <returns></returns>
         public async Task<CiResult<SmsResponse>> SendSmsAsync(SmsModel model)
         {
-
-            var content = new FormUrlEncodedContent(new Dictionary<string, string>()
+            var dict = new Dictionary<string, string>()
             {
                 { "username", _smsAccount },
                 { "password", _smsPassword },
                 { "dstaddr", model.Mobile },
                 { "smbody", model.Content },
-            });
+            };
+
+            if (model.SendTime.HasValue)
+                dict.Add("dlvtime", model.SendTime.Value.ToString("yyyyMMddHHmmss"));
+
+            var content = new FormUrlEncodedContent(dict);
 
             var response = await _smsClient.PostAsync("/api/mtk/SmSend", content).ConfigureAwait(false);
-            var ss = await response.Content.ReadAsStringAsync();
-            // var responseModel = CreditResponseToModel(response.Body.sendSMSResult);
-            //
+            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            
+            var responseModel = CreditResponseToModel(responseContent);
             var result = new CiResult<SmsResponse>();
             // {
             //     Payload = responseModel
@@ -149,24 +154,28 @@ namespace Mitake.Sms.Core
         /// <returns></returns>
         private SmsResponse CreditResponseToModel(string responseString)
         {
-            var values = responseString.Split(',');
+            var values = responseString.Split("\r\n");
+
+            int removeIndex = 0;
+            for (int i = 1; i < values.Length; i++)
+            {
+                if (values[i].Contains("[") && values[i].Contains("]"))
+                {
+                    removeIndex = i;
+                    break;
+                }
+            }
+            
+            values = values.Where((x, i) => i < removeIndex).ToArray();
+
             var responseModel = new SmsResponse()
             {
-                Credit = double.Parse(values[0]),
+                Credit = double.Parse(values.FirstOrDefault(x=>x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
+                Status = values.FirstOrDefault(x=>x.StartsWith("statuscode"))?.Split("=")[1] ?? string.Empty,
+                BatchId = values.FirstOrDefault(x=>x.StartsWith("msgid"))?.Split("=")[1] ?? string.Empty,
+                Cost = double.Parse(values.FirstOrDefault(x=>x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
             };
-
-            if (values.Length > 2)
-            {
-                responseModel.Sent = int.Parse(values[1]);
-                responseModel.Cost = double.Parse(values[2]);
-                responseModel.UnSend = int.Parse(values[3]);
-                responseModel.BatchId = Guid.Parse(values[4]);
-            }
-            else
-            {
-                responseModel.Message = values[1];
-            }
-
+            
             return responseModel;
         }
 

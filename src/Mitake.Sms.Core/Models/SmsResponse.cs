@@ -30,11 +30,13 @@ namespace Mitake.Sms.Core.Models
         /// 批次識別代碼
         /// 唯一識別碼，可藉由本識別碼查詢發送狀態
         /// </summary>
-        public Guid BatchId { get; set; }
+        public string BatchId { get; set; }
 
         /// <summary>
         /// 回應之相關資訊
         /// </summary>
         public string Message { get; set; }
+
+        public string Status { get; set; }
     }
 }

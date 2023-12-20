@@ -12,8 +12,6 @@ namespace Mitake.Sms.Core.Example
 
             using (var smsService = new SmsService(config["SmsAccount"], config["SmsPassword"]))
             {
-                Console.WriteLine("Creating sms client...");
-
                 var model = new SmsModel()
                 {
                     Mobile = config["Mobile"],
