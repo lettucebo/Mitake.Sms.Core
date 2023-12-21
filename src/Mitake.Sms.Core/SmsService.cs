@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
+using Ci.Extension.Core;
 using Ci.Result;
 using Mitake.Sms.Core.Models;
 using PhoneNumbers;
@@ -51,25 +52,29 @@ namespace Mitake.Sms.Core
 
             var response = await _smsClient.PostAsync("/api/mtk/SmSend", content).ConfigureAwait(false);
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            
+
             var responseModel = CreditResponseToModel(responseContent);
-            var result = new CiResult<SmsResponse>();
-            // {
-            //     Payload = responseModel
-            // };
-            //
-            // if (responseModel.Credit >= 0)
-            //     result.Status = CiStatus.Success;
-            // else if (responseModel.Credit == -301.0)
-            // {
-            //     result.Status = CiStatus.UnAuthorized;
-            //     result.Message = "Session 資料不存在，請重新登入。";
-            // }
-            // else if (responseModel.Credit == -99.0)
-            //     result.Message = "主機端發生不明錯誤，請與廠商窗口聯繫。";
-            // else
-            //     result.Message = "未知錯誤。";
-            //
+            var result = new CiResult<SmsResponse>()
+            {
+                Payload = responseModel
+            };
+
+            if (responseModel.Status is StatusFlag.Zero or StatusFlag.One or StatusFlag.Two or StatusFlag.Four)
+            {
+                result.Status = CiStatus.Success;
+                result.Message = responseModel.Status.GetDescription();
+            }
+            else if (responseModel.Status is StatusFlag.C or StatusFlag.D or StatusFlag.E or StatusFlag.F or StatusFlag.H or StatusFlag.K or StatusFlag.L or StatusFlag.M or StatusFlag.N or StatusFlag.P or StatusFlag.R or StatusFlag.S )
+            {
+                result.Status = CiStatus.UnAuthorized;
+                result.Message = responseModel.Status.GetDescription();
+            }
+            else
+            {
+                result.Status = CiStatus.Failure;
+                result.Message = responseModel.Status.GetDescription();
+            }
+
             return result;
         }
 
@@ -165,17 +170,53 @@ namespace Mitake.Sms.Core
                     break;
                 }
             }
-            
+
             values = values.Where((x, i) => i < removeIndex).ToArray();
 
             var responseModel = new SmsResponse()
             {
-                Credit = double.Parse(values.FirstOrDefault(x=>x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
-                Status = values.FirstOrDefault(x=>x.StartsWith("statuscode"))?.Split("=")[1] ?? string.Empty,
-                BatchId = values.FirstOrDefault(x=>x.StartsWith("msgid"))?.Split("=")[1] ?? string.Empty,
-                Cost = double.Parse(values.FirstOrDefault(x=>x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
+                Credit = double.Parse(values.FirstOrDefault(x => x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
+                BatchId = values.FirstOrDefault(x => x.StartsWith("msgid"))?.Split("=")[1] ?? string.Empty,
+                Cost = double.Parse(values.FirstOrDefault(x => x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
             };
-            
+
+            var statusStr = values.FirstOrDefault(x => x.StartsWith("statuscode"))?.Split("=")[1] ?? string.Empty;
+
+            responseModel.Status = statusStr switch
+            {
+                "0" => StatusFlag.Zero,
+                "1" => StatusFlag.One,
+                "2" => StatusFlag.Two,
+                "4" => StatusFlag.Four,
+                "5" => StatusFlag.Five,
+                "6" => StatusFlag.Six,
+                "7" => StatusFlag.Seven,
+                "8" => StatusFlag.Eight,
+                "9" => StatusFlag.Nine,
+                "a" => StatusFlag.A,
+                "b" => StatusFlag.B,
+                "c" => StatusFlag.C,
+                "d" => StatusFlag.D,
+                "e" => StatusFlag.E,
+                "f" => StatusFlag.F,
+                "h" => StatusFlag.H,
+                "k" => StatusFlag.K,
+                "l" => StatusFlag.L,
+                "m" => StatusFlag.M,
+                "n" => StatusFlag.N,
+                "p" => StatusFlag.P,
+                "r" => StatusFlag.R,
+                "s" => StatusFlag.S,
+                "t" => StatusFlag.T,
+                "u" => StatusFlag.U,
+                "v" => StatusFlag.V,
+                "w" => StatusFlag.W,
+                "x" => StatusFlag.X,
+                "y" => StatusFlag.Y,
+                "z" => StatusFlag.Z,
+                _ => StatusFlag.Star
+            };
+
             return responseModel;
         }
 

@@ -37,6 +37,6 @@ namespace Mitake.Sms.Core.Models
         /// </summary>
         public string Message { get; set; }
 
-        public string Status { get; set; }
+        public StatusFlag Status { get; set; }
     }
 }

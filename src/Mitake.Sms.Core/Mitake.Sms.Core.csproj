@@ -8,9 +8,11 @@
         <Version>1.0.5</Version>
         <PackageIconUrl>https://i.imgur.com/3xZ4Cdx.png</PackageIconUrl>
         <PackageProjectUrl>https://github.com/lettucebo/Aptg.KonaKart</PackageProjectUrl>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Ci.Extensions" Version="6.0.3" />
         <PackageReference Include="Ci.Result" Version="4.1.1" />
         <PackageReference Include="libphonenumber-csharp" Version="8.13.26" />
         <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
