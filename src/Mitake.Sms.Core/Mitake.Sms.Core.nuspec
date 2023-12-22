@@ -8,6 +8,7 @@
         <description>$description$</description>
         <projectUrl>$PackageProjectUrl$</projectUrl>
         <iconUrl>$PackageIconUrl$</iconUrl>
+        <packageIcon>icon.png</packageIcon>
         <dependencies>
             <group targetFramework=".NETStandard2.1">
                 <dependency id="Ci.Extensions" version="6.0.3" />

@@ -27,7 +27,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Connected Services\" />
+        <Folder Include="Connected Services\" />
+        <None Include="icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
