@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <id>Aptg.KonaKart</id>
+        <id>Mitake.Sms.Core</id>
         <version>$version$</version>
         <authors>$authors$</authors>
         <owners>$authors$</owners>
@@ -9,9 +9,13 @@
         <projectUrl>$PackageProjectUrl$</projectUrl>
         <iconUrl>$PackageIconUrl$</iconUrl>
         <dependencies>
-            <group targetFramework=".NETStandard2.0">
+            <group targetFramework=".NETStandard2.1">
+                <dependency id="Ci.Extensions" version="6.0.3" />
                 <dependency id="Ci.Result" version="4.1.1" />
-                <dependency id="libphonenumber-csharp" version="8.12.53" />
+                <dependency id="Ci.Sequential" version="3.0.2" />
+                <dependency id="libphonenumber-csharp" version="8.13.26" />
+                <dependency id="ini-parser-netstandard" version="8.13.26" />
+                <dependency id="System.Security.Cryptography.Xml" version="6.0.1" />
                 <dependency id="System.ServiceModel.Duplex" version="4.9.0" />
                 <dependency id="System.ServiceModel.Federation" version="4.9.0" />
                 <dependency id="System.ServiceModel.Http" version="4.9.0" />

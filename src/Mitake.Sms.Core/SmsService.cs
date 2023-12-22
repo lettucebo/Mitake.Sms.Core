@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 using Ci.Extension.Core;
 using Ci.Result;
+using Ci.Sequential;
+using IniParser.Parser;
 using Mitake.Sms.Core.Models;
-using PhoneNumbers;
 
 namespace Mitake.Sms.Core
 {
@@ -32,13 +33,12 @@ namespace Mitake.Sms.Core
         /// 簡訊發送
         /// </summary>
         /// <param name="model">簡訊內容</param>
-        /// <param name="receiverPhone">接收人之手機號碼，多筆接收人時，請以半形逗點隔開( , )，如0912345678,0922333444</param>
-        /// <param name="sendTime">簡訊預定發送時間，立即發送：請傳入NULL，預約發送：請傳入預計發送時間，若傳送時間小於系統接單時間，將不予傳送。</param>
         /// <returns></returns>
         public async Task<CiResult<SmsResponse>> SendSmsAsync(SmsModel model)
         {
             var dict = new Dictionary<string, string>()
             {
+                { "clientid", model.ClientId.HasValue ? model.ClientId.Value.ToString() : GuidSequential.NewGuid().ToString() },
                 { "username", _smsAccount },
                 { "password", _smsPassword },
                 { "dstaddr", model.Mobile },
@@ -56,168 +56,133 @@ namespace Mitake.Sms.Core
             var responseModel = CreditResponseToModel(responseContent);
             var result = new CiResult<SmsResponse>()
             {
-                Payload = responseModel
+                Payload = responseModel.First()
             };
 
-            if (responseModel.Status is StatusFlag.Zero or StatusFlag.One or StatusFlag.Two or StatusFlag.Four)
-            {
-                result.Status = CiStatus.Success;
-                result.Message = responseModel.Status.GetDescription();
-            }
-            else if (responseModel.Status is StatusFlag.C or StatusFlag.D or StatusFlag.E or StatusFlag.F or StatusFlag.H or StatusFlag.K or StatusFlag.L or StatusFlag.M or StatusFlag.N or StatusFlag.P or StatusFlag.R or StatusFlag.S )
-            {
-                result.Status = CiStatus.UnAuthorized;
-                result.Message = responseModel.Status.GetDescription();
-            }
-            else
-            {
-                result.Status = CiStatus.Failure;
-                result.Message = responseModel.Status.GetDescription();
-            }
+            result.Status = responseModel.First().Status.ToCiStatus();
+            result.Message = responseModel.First().Status.GetDescription();
 
             return result;
         }
 
         /// <summary>
-        /// 簡訊發送
+        /// 批次簡訊發送
         /// </summary>
         /// <param name="models"></param>
-        /// <param name="subject"></param>
-        /// <param name="sendTime"></param>
         /// <returns></returns>
-        // public async Task<CiResult<SmsResponse>> SendPersonalizedSmsAsync(List<PersonalizedSmsModel> models, string subject = "", DateTime? sendTime = null)
-        // {
-        //     var xmlDoc = new XmlDocument();
-        //     var repsElement = xmlDoc.CreateElement("REPS");
-        //     xmlDoc.AppendChild(repsElement);
-        //
-        //     var phoneUtil = PhoneNumberUtil.GetInstance();
-        //
-        //     foreach (var model in models)
-        //     {
-        //         var interMobile = phoneUtil.Parse(model.Mobile, "TW");
-        //         ;
-        //
-        //         var userElement = xmlDoc.CreateElement("USER");
-        //         userElement.SetAttribute("NAME", model.Name);
-        //         userElement.SetAttribute("MOBILE", phoneUtil.Format(interMobile, PhoneNumberFormat.E164));
-        //         userElement.SetAttribute("EMAIL", model.Email);
-        //         userElement.SetAttribute("SENDTIME", model.SendTime?.ToString("yyyyMMddHHmmss"));
-        //
-        //         var cdata = xmlDoc.CreateCDataSection(model.Content);
-        //
-        //         userElement.AppendChild(cdata);
-        //         repsElement.AppendChild(userElement);
-        //     }
-        //
-        //     var xmlStr = xmlDoc.OuterXml;
-        //     string sendTimeStr = string.Empty;
-        //     if (sendTime.HasValue)
-        //         sendTimeStr = sendTime.Value.ToString("yyyyMMddHHmmss");
-        //
-        //     var response = await _smsClient.sendParamSMSAsync(_sessionKey, subject, xmlStr, sendTimeStr).ConfigureAwait(false);
-        //     var responseModel = CreditResponseToModel(response.Body.sendParamSMSResult);
-        //
-        //     var result = new CiResult<SmsResponse>()
-        //     {
-        //         Payload = responseModel
-        //     };
-        //
-        //     if (responseModel.Credit >= 0)
-        //         result.Status = CiStatus.Success;
-        //     else if (responseModel.Credit == -301.0)
-        //     {
-        //         result.Status = CiStatus.UnAuthorized;
-        //         result.Message = $"Session 資料不存在，請重新登入。\r\n Server msg: {responseModel.Message}";
-        //     }
-        //     else if (responseModel.Credit == -99.0)
-        //         result.Message = $"主機端發生不明錯誤，請與廠商窗口聯繫。\r\n Server msg: {responseModel.Message}";
-        //     else
-        //         result.Message = $"未知錯誤。\r\n Server msg: {responseModel.Message}";
-        //
-        //     return result;
-        // }
-        //
-        // /// <summary>
-        // /// 發送狀態查詢
-        // /// </summary>
-        // /// <param name="batchId"></param>
-        // /// <param name="page"></param>
-        // public async Task<getDeliveryStatusResponse> QueryByBatchId(string batchId, int page = 1)
-        // {
-        //     if (page < 1)
-        //         throw new ArgumentOutOfRangeException(nameof(page));
-        //
-        //     var response = await _smsClient.getDeliveryStatusAsync(_sessionKey, batchId, page.ToString());
-        //     return response;
-        // }
-
-        /// <summary>
-        /// 將回應轉為 Model
-        /// </summary>
-        /// <param name="responseString"></param>
-        /// <returns></returns>
-        private SmsResponse CreditResponseToModel(string responseString)
+        public async Task<CiResult<List<SmsResponse>>> SendBulkSmsAsync(List<SmsModel> models)
         {
-            var values = responseString.Split("\r\n");
+            // Mitake only allows 500 messages per request.
+            var modelChunks = models.Chunk(500);
+            var resultList = new List<CiResult<List<SmsResponse>>>();
 
-            int removeIndex = 0;
-            for (int i = 1; i < values.Length; i++)
+            foreach (var chunk in modelChunks)
             {
-                if (values[i].Contains("[") && values[i].Contains("]"))
+                var body = new StringBuilder();
+                foreach (var model in chunk)
                 {
-                    removeIndex = i;
-                    break;
+                    var clientId = model.ClientId.HasValue ? model.ClientId.Value.ToString() : GuidSequential.NewGuid().ToString();
+                    body.AppendLine(
+                        $"{clientId}$${model.Mobile}$${string.Empty}$${string.Empty}$${model.Name}$$$${model.Content}");
                 }
+
+                var content = new StringContent(body.ToString());
+
+                var response = await _smsClient
+                    .PostAsync(
+                        $"/api/mtk/SmBulkSend?username={_smsAccount}&password={_smsPassword}&Encoding_PostIn=UTF-8"
+                        , content).ConfigureAwait(false);
+                var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                var responseModel = CreditResponseToModel(responseContent);
+                var result = new CiResult<List<SmsResponse>>()
+                {
+                    Payload = responseModel
+                };
+
+                var status = responseModel.FirstOrDefault(x => x.Status.ToCiStatus() != CiStatus.Success)?.Status ?? responseModel.First().Status;
+
+                result.Status = status.ToCiStatus();
+                result.Message = status.GetDescription();
+
+                resultList.Add(result);
             }
 
-            values = values.Where((x, i) => i < removeIndex).ToArray();
+            if (resultList.Count == 1)
+                return resultList.First();
 
-            var responseModel = new SmsResponse()
+            var finalResult = resultList.FirstOrDefault(x => x.Status != CiStatus.Success) ??
+                              resultList.First();
+            finalResult.Payload = resultList.SelectMany(x => x.Payload).ToList();
+            return finalResult;
+        }
+
+        /// <summary>
+        /// Converts a credit response string to a list of SmsResponse models.
+        /// </summary>
+        /// <param name="responseString">The response string to be parsed.</param>
+        /// <returns>A list of SmsResponse models.</returns>
+        private List<SmsResponse> CreditResponseToModel(string responseString)
+        {
+            var parser = new IniDataParser();
+            var iniData = parser.Parse(responseString);
+
+            var iniList = iniData.Sections.ToList();
+
+            var result = new List<SmsResponse>();
+
+            foreach (var item in iniList)
             {
-                Credit = double.Parse(values.FirstOrDefault(x => x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
-                BatchId = values.FirstOrDefault(x => x.StartsWith("msgid"))?.Split("=")[1] ?? string.Empty,
-                Cost = double.Parse(values.FirstOrDefault(x => x.StartsWith("AccountPoint"))?.Split("=")[1] ?? "0"),
-            };
+                var responseModel = new SmsResponse()
+                {
+                    Credit = double.Parse(item.Keys.FirstOrDefault(x => x.KeyName == "AccountPoint")?.Value ?? "-1"),
+                    BatchId = item.SectionName,
+                    Cost = double.Parse(item.Keys.FirstOrDefault(x => x.KeyName == "smsPoint")?.Value ?? "-1"),
+                    IsDuplicate = (item.Keys.FirstOrDefault(x => x.KeyName == "Duplicate")?.Value ?? string.Empty) == "Y",
+                    MsgId = item.Keys.FirstOrDefault(x => x.KeyName == "msgid")?.Value ?? string.Empty,
+                };
 
-            var statusStr = values.FirstOrDefault(x => x.StartsWith("statuscode"))?.Split("=")[1] ?? string.Empty;
+                var statusStr = item.Keys.FirstOrDefault(x => x.KeyName == "statuscode")?.Value ?? string.Empty;
 
-            responseModel.Status = statusStr switch
-            {
-                "0" => StatusFlag.Zero,
-                "1" => StatusFlag.One,
-                "2" => StatusFlag.Two,
-                "4" => StatusFlag.Four,
-                "5" => StatusFlag.Five,
-                "6" => StatusFlag.Six,
-                "7" => StatusFlag.Seven,
-                "8" => StatusFlag.Eight,
-                "9" => StatusFlag.Nine,
-                "a" => StatusFlag.A,
-                "b" => StatusFlag.B,
-                "c" => StatusFlag.C,
-                "d" => StatusFlag.D,
-                "e" => StatusFlag.E,
-                "f" => StatusFlag.F,
-                "h" => StatusFlag.H,
-                "k" => StatusFlag.K,
-                "l" => StatusFlag.L,
-                "m" => StatusFlag.M,
-                "n" => StatusFlag.N,
-                "p" => StatusFlag.P,
-                "r" => StatusFlag.R,
-                "s" => StatusFlag.S,
-                "t" => StatusFlag.T,
-                "u" => StatusFlag.U,
-                "v" => StatusFlag.V,
-                "w" => StatusFlag.W,
-                "x" => StatusFlag.X,
-                "y" => StatusFlag.Y,
-                "z" => StatusFlag.Z,
-                _ => StatusFlag.Star
-            };
+                responseModel.Status = statusStr switch
+                {
+                    "0" => StatusFlag.Zero,
+                    "1" => StatusFlag.One,
+                    "2" => StatusFlag.Two,
+                    "4" => StatusFlag.Four,
+                    "5" => StatusFlag.Five,
+                    "6" => StatusFlag.Six,
+                    "7" => StatusFlag.Seven,
+                    "8" => StatusFlag.Eight,
+                    "9" => StatusFlag.Nine,
+                    "a" => StatusFlag.A,
+                    "b" => StatusFlag.B,
+                    "c" => StatusFlag.C,
+                    "d" => StatusFlag.D,
+                    "e" => StatusFlag.E,
+                    "f" => StatusFlag.F,
+                    "h" => StatusFlag.H,
+                    "k" => StatusFlag.K,
+                    "l" => StatusFlag.L,
+                    "m" => StatusFlag.M,
+                    "n" => StatusFlag.N,
+                    "p" => StatusFlag.P,
+                    "r" => StatusFlag.R,
+                    "s" => StatusFlag.S,
+                    "t" => StatusFlag.T,
+                    "u" => StatusFlag.U,
+                    "v" => StatusFlag.V,
+                    "w" => StatusFlag.W,
+                    "x" => StatusFlag.X,
+                    "y" => StatusFlag.Y,
+                    "z" => StatusFlag.Z,
+                    _ => StatusFlag.Star
+                };
 
-            return responseModel;
+                result.Add(responseModel);
+            }
+
+            return result;
         }
 
         public void Dispose()

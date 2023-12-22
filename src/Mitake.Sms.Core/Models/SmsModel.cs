@@ -1,11 +1,12 @@
 ﻿using System;
+using Ci.Sequential;
 
 namespace Mitake.Sms.Core.Models
 {
     /// <summary>
     /// 簡訊內容
     /// </summary>
-    public class SmsModel 
+    public class SmsModel
     {
         /// <summary>
         /// 接收人姓名(可為空字串)。若有帶入姓名，將於發送紀錄中出現，以方便識別
@@ -17,10 +18,7 @@ namespace Mitake.Sms.Core.Models
         /// </summary>
         public string Mobile { get; set; }
 
-        /// <summary>
-        /// 收訊人之EMail(可為空字串)。EVERY8D 會將簡訊內容一併傳送一份 Email 給收訊人，此部份不收費
-        /// </summary>
-        public string Email { get; set; }
+        public Guid? ClientId { get; set; }
 
         /// <summary>
         /// 簡訊發送內容

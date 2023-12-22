@@ -38,5 +38,13 @@ namespace Mitake.Sms.Core.Models
         public string Message { get; set; }
 
         public StatusFlag Status { get; set; }
+
+        public string MsgId { get; set; }
+        
+        
+        /// <summary>
+        /// 是否為重複發送的簡訊
+        /// </summary>
+        public bool IsDuplicate { get; set; }
     }
 }

@@ -10,6 +10,11 @@ namespace Mitake.Sms.Core.Example
         {
             var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
+            await SendMultiSmsAsync(config).ConfigureAwait(false);
+        }
+
+        private static async Task SendSingleSmsAsync(IConfigurationRoot config)
+        {
             using (var smsService = new SmsService(config["SmsAccount"], config["SmsPassword"]))
             {
                 var model = new SmsModel()
@@ -17,16 +22,40 @@ namespace Mitake.Sms.Core.Example
                     Mobile = config["Mobile"],
                     Content = "This is a test msg."
                 };
-                
 
-                await smsService.SendSmsAsync(model);
+                var sendResult = await smsService.SendSmsAsync(model).ConfigureAwait(false);
 
-                // await smsService.QueryByBatchId("00000000-0000-0000-0000-000000000000");
+                Console.WriteLine(
+                    $"Send result: {sendResult.Status}, {sendResult.Message}, BatchId: {sendResult.Payload.BatchId}");
 
-                //var sendResult = await smsService.SendPersonalizedSmsAsync(sendList).ConfigureAwait(false);
+                Console.WriteLine("Connection successfully closed.");
+            }
+        }
 
-                //Console.WriteLine(
-                //    $"Send result: {sendResult.Status}, {sendResult.Message}, BatchId: {sendResult.Payload.BatchId}");
+        private static async Task SendMultiSmsAsync(IConfigurationRoot config)
+        {
+            using (var smsService = new SmsService(config["SmsAccount"], config["SmsPassword"]))
+            {
+                var models = new List<SmsModel>()
+                {
+                    new SmsModel()
+                    {
+                        Mobile = "0921422887",
+                        Content = "This is a test msg for Money.",
+                        Name = "Money"
+                    },
+                    new SmsModel()
+                    {
+                        Mobile = "0921422887",
+                        Content = "This is a test msg for Din but is Money.",
+                        Name = "Din"
+                    }
+                };
+
+                var sendResult = await smsService.SendBulkSmsAsync(models).ConfigureAwait(false);
+
+                Console.WriteLine(
+                    $"Send result: {sendResult.Status}, {sendResult.Message}");
 
                 Console.WriteLine("Connection successfully closed.");
             }
