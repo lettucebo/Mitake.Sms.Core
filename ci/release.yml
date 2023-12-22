@@ -28,7 +28,7 @@ stages:
             displayName: Pack
             inputs:
               command: 'pack'
-              packagesToPack: 'src/Aptg.KonaKart/Aptg.KonaKart.csproj'
+              packagesToPack: 'src/Mitake.Sms.Core/Mitake.Sms.Core.csproj'
               includesymbols: true
               versioningScheme: 'off'
 
