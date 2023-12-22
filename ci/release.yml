@@ -7,7 +7,7 @@ stages:
       - job: Build
         displayName: Build
         pool:
-          vmImage: "ubuntu-22.04"
+          vmImage: "ubuntu-latest"
         variables:
           buildConfiguration: "Release"
         steps:
@@ -42,7 +42,7 @@ stages:
     jobs:
       - job: Depoly
         pool:
-          vmImage: "ubuntu-2022"
+          vmImage: "ubuntu-latest"
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
