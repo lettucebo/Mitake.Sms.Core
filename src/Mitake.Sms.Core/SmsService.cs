@@ -131,6 +131,22 @@ namespace Mitake.Sms.Core
 
             var result = new List<SmsResponse>();
 
+            if (iniList.Count == 0)
+            {
+                var statusStr = iniData.Global.GetKeyData("statuscode").Value;
+                result.Add(new SmsResponse()
+                {
+                    Status = CodeStringToFlag(statusStr),
+                    MsgId = string.Empty,
+                    BatchId = string.Empty,
+                    Credit = -1,
+                    Cost = -1,
+                    IsDuplicate = false
+                });
+
+                return result;
+            }
+
             foreach (var item in iniList)
             {
                 var responseModel = new SmsResponse()
@@ -144,45 +160,50 @@ namespace Mitake.Sms.Core
 
                 var statusStr = item.Keys.FirstOrDefault(x => x.KeyName == "statuscode")?.Value ?? string.Empty;
 
-                responseModel.Status = statusStr switch
-                {
-                    "0" => StatusFlag.Zero,
-                    "1" => StatusFlag.One,
-                    "2" => StatusFlag.Two,
-                    "4" => StatusFlag.Four,
-                    "5" => StatusFlag.Five,
-                    "6" => StatusFlag.Six,
-                    "7" => StatusFlag.Seven,
-                    "8" => StatusFlag.Eight,
-                    "9" => StatusFlag.Nine,
-                    "a" => StatusFlag.A,
-                    "b" => StatusFlag.B,
-                    "c" => StatusFlag.C,
-                    "d" => StatusFlag.D,
-                    "e" => StatusFlag.E,
-                    "f" => StatusFlag.F,
-                    "h" => StatusFlag.H,
-                    "k" => StatusFlag.K,
-                    "l" => StatusFlag.L,
-                    "m" => StatusFlag.M,
-                    "n" => StatusFlag.N,
-                    "p" => StatusFlag.P,
-                    "r" => StatusFlag.R,
-                    "s" => StatusFlag.S,
-                    "t" => StatusFlag.T,
-                    "u" => StatusFlag.U,
-                    "v" => StatusFlag.V,
-                    "w" => StatusFlag.W,
-                    "x" => StatusFlag.X,
-                    "y" => StatusFlag.Y,
-                    "z" => StatusFlag.Z,
-                    _ => StatusFlag.Star
-                };
+                responseModel.Status = CodeStringToFlag(statusStr);
 
                 result.Add(responseModel);
             }
 
             return result;
+        }
+
+        private StatusFlag CodeStringToFlag(string statusStr)
+        {
+            return statusStr switch
+            {
+                "0" => StatusFlag.Zero,
+                "1" => StatusFlag.One,
+                "2" => StatusFlag.Two,
+                "4" => StatusFlag.Four,
+                "5" => StatusFlag.Five,
+                "6" => StatusFlag.Six,
+                "7" => StatusFlag.Seven,
+                "8" => StatusFlag.Eight,
+                "9" => StatusFlag.Nine,
+                "a" => StatusFlag.A,
+                "b" => StatusFlag.B,
+                "c" => StatusFlag.C,
+                "d" => StatusFlag.D,
+                "e" => StatusFlag.E,
+                "f" => StatusFlag.F,
+                "h" => StatusFlag.H,
+                "k" => StatusFlag.K,
+                "l" => StatusFlag.L,
+                "m" => StatusFlag.M,
+                "n" => StatusFlag.N,
+                "p" => StatusFlag.P,
+                "r" => StatusFlag.R,
+                "s" => StatusFlag.S,
+                "t" => StatusFlag.T,
+                "u" => StatusFlag.U,
+                "v" => StatusFlag.V,
+                "w" => StatusFlag.W,
+                "x" => StatusFlag.X,
+                "y" => StatusFlag.Y,
+                "z" => StatusFlag.Z,
+                _ => StatusFlag.Star
+            };
         }
 
         public void Dispose()
