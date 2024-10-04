@@ -1,5 +1,4 @@
-﻿using Ci.Result;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Mitake.Sms.Core.Models;
 
 namespace Mitake.Sms.Core.Example
@@ -10,7 +9,7 @@ namespace Mitake.Sms.Core.Example
         {
             var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
-            await SendMultiSmsAsync(config).ConfigureAwait(false);
+            await SendSingleSmsAsync(config).ConfigureAwait(false);
         }
 
         private static async Task SendSingleSmsAsync(IConfigurationRoot config)
@@ -40,13 +39,13 @@ namespace Mitake.Sms.Core.Example
                 {
                     new SmsModel()
                     {
-                        Mobile = "0921422887",
+                        Mobile = config["Mobile"],
                         Content = "This is a test msg for Money.",
                         Name = "Money"
                     },
                     new SmsModel()
                     {
-                        Mobile = "0921422887",
+                        Mobile = config["Mobile"],
                         Content = "This is a test msg for Din but is Money.",
                         Name = "Din"
                     }
